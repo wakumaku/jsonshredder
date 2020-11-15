@@ -1,15 +1,17 @@
 # JSON Shredder (Oroku Saki)
 
-Transforms JSON objects to another objects with the same values.
+⚠️ **WIP** 🚨
 
-Have you ever ... (jo mai mai ...)
+Transform JSON objects to other objects with the same values.
+
+Have you ever ...
 
 - ... received big payloads where you just need a couple of fields?
-- ... wanted build new endpoints without waiting for the caller re-implementation?
+- ... wanted to build new endpoints without waiting for the caller re-implementation?
 - ... received complex nested payloads and you just need a key/value flatten object?
 
 **jsonshredder can help you,**
-**receive the payload you deserve!**
+**receive the payload you deserve! 💪**
 
 - Define transformations to create **new payloads** from old ones
 - Use it as **transformation** service
@@ -95,7 +97,7 @@ $ curl -X POST -d '{"payload":{"user":{"data":{"user_id":12345,"city":"NY","geo"
 
 ### Transformation and forwarding
 
-Now imagine that you want it's to forward the resulting transformation to an AWS SQS Queue.
+Imagine you want to forward the resulting transformation to an AWS SQS Queue.
 
 1. Add an SQS forwarder configuration in your config file like this:
 
@@ -131,7 +133,7 @@ $ docker run --rm -p 8080:8080 \
 ...
 ```
 
-NOTE: here we are sharing our aws credentials because we are using a profile.
+NOTE: here we are sharing our AWS credentials because we are using a profile.
 
 If you prefer, you can specify the `aws_access_key_id` and `aws_secret_access_key` params.
 
@@ -161,7 +163,7 @@ $ aws sqs get-message --queue-url http://...
 ### Global
 
 - `port`: HTTP Server port number
-- `loglevel`: debug, info, warn or err
+- `loglevel`: debug, info, warn or error
 
 ### Transformations
 
@@ -172,9 +174,9 @@ Each transformation MUST have a unique name. Those names will be used in the HTT
     operation: extract       # add | extract, default: extract. Add appends new fields to the original structure.
     mappings:
       - path: user.data.age  # jmespath expression: https://jmespath.org/
-        path_out: age        # path to create with the value (or object) found in path
-        type_out: string     # string | int | float, default: original value type. Can force conversions. Adds quotes when is string and try to convert to int/float.
-        default_null: 0      # default value when the path doesn't exist or the value is null
+        path_out: age        # (optional) path to create with the value (or object) found in path
+        type_out: string     # (optional) string | int | float, default: original value type. Can force conversions. Adds quotes when is string and try to convert to int/float.
+        default_null: 0      # (optional) default value when the path doesn't exist or the value is null
 ```
 
 ### Forwarders
