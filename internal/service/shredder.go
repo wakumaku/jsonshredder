@@ -33,8 +33,7 @@ func NewShredder(transformations map[string]config.Transformation, logger *zerol
 
 // Shred applies a transformation to an input, returns the shredded result
 func (c *Shredder) Shred(transformName string, input []byte) ([]byte, error) {
-	transformConfig, err := c.getTransformConfig(transformName)
-	if err == nil {
+	if transformConfig, err := c.getTransformConfig(transformName); err == nil {
 		out, err := shredder.Shred(transformConfig, input)
 		if err != nil {
 			err = fmt.Errorf("%w: %s", ErrShredProcessing, err)
@@ -45,7 +44,7 @@ func (c *Shredder) Shred(transformName string, input []byte) ([]byte, error) {
 		return out, nil
 	}
 
-	err = fmt.Errorf("%w: '%s'", ErrShredTransformNotFound, transformName)
+	err := fmt.Errorf("%w: '%s'", ErrShredTransformNotFound, transformName)
 	c.logger.Debug().Err(err).Send()
 	return nil, err
 }

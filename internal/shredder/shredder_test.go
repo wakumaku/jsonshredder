@@ -8,7 +8,6 @@ import (
 )
 
 func TestShred(t *testing.T) {
-
 	mappings := []config.Mapping{
 		{
 			Path:        "user.data.age",
@@ -54,13 +53,14 @@ func TestShred(t *testing.T) {
 	out, err := Shred(config.Transformation{Mappings: mappings}, jsonDoc)
 	assert.NoError(t, err)
 
-	expectedOut := []byte(`{"1111":{"2222":{"3333":{"4444":"john","555":"john","xxx":"john"}}},"aaa":{"bbb":{"ccc":{"ddd":2}}},"username":{"weight":93.504}}`)
+	expectedOut := []byte(`{
+		"1111":{"2222":{"3333":{"4444":"john","555":"john","xxx":"john"}}},"aaa":{"bbb":{"ccc":{"ddd":2}}},"username":{"weight":93.504}
+	}`)
 
 	assert.Equal(t, out, expectedOut)
 }
 
 func BenchmarkShredShort(b *testing.B) {
-
 	mappings := []config.Mapping{
 		{
 			Path:        "user.data.age",
@@ -87,7 +87,6 @@ func BenchmarkShredShort(b *testing.B) {
 }
 
 func BenchmarkShredLong(b *testing.B) {
-
 	mappings := []config.Mapping{
 		{
 			Path:        "user.data.age",
@@ -160,7 +159,6 @@ func BenchmarkShredLong(b *testing.B) {
 }
 
 func BenchmarkDeepSetLong(b *testing.B) {
-
 	in := map[string]interface{}{}
 	keys := []string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q"}
 
@@ -171,7 +169,6 @@ func BenchmarkDeepSetLong(b *testing.B) {
 }
 
 func BenchmarkDeepSetShort(b *testing.B) {
-
 	in := map[string]interface{}{}
 	keys := []string{"a", "b"}
 
