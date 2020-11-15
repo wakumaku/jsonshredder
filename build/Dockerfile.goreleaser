@@ -1,0 +1,3 @@
+FROM scratch
+COPY jsonshredder /
+ENTRYPOINT [ "/jsonshredder", "-config", "/config.yml" ]

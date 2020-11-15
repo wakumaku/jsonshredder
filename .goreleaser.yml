@@ -1,0 +1,60 @@
+before:
+  hooks:
+    - docker login -u {{ .Env.DOCKER_USERNAME }} -p {{ .Env.DOCKER_TOKEN }}
+
+builds:
+  - main: ./cmd/server
+    id: "jsonshredder"
+    env:
+      - CGO_ENABLED=0
+    binary: jsonshredder
+    goos:
+      - linux
+      - darwin
+      - windows
+
+archives:
+- replacements:
+    darwin: Darwin
+    linux: Linux
+    windows: Windows
+    386: i386
+    amd64: x86_64
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'
+
+release:
+
+  prerelease: auto
+
+dockers:
+  -
+    goos: linux
+
+    goarch: amd64
+
+    binaries:
+    - jsonshredder
+
+    builds:
+    - jsonshredder
+
+    image_templates:
+    - "wakumaku/jsonshredder:latest"
+    - "wakumaku/jsonshredder:{{ .Tag }}"
+    - "wakumaku/jsonshredder:v{{ .Major }}"
+
+    skip_push: false
+
+    dockerfile: ./build/Dockerfile.goreleaser

@@ -1,0 +1,102 @@
+---
+port: 8080
+loglevel: debug
+
+transformations:
+  - name: myfirsttransformation
+    mappings:
+      - path: payload.user.data.user
+        path_out: username
+      - path: payload.user.data.email
+        path_out: email_address
+
+  - name: transform1
+    mappings:
+      - path: user.data.name
+        path_out: username
+      - path: user.data.email
+        path_out: email
+
+  - name: transform2
+    operation: add
+    mappings:
+      - path: username
+        path_out: username2
+      - path: email
+        path_out: email2
+        default_null: "empty@email.com"
+
+
+  - name: transform3
+    operation: add
+    mappings:
+      - path: username2
+        path_out: username3
+      - path: email2
+        path_out: email3
+
+  - name: transform4
+    operation: add
+    mappings:
+      - path: username3
+        path_out: username4
+      - path: email3
+        path_out: email4
+
+forwarders:
+  - name: sendtosns
+    kind: sns
+    params:
+      aws_endpoint: http://localstack:4566
+      aws_access_key_id: foo
+      aws_secret_access_key: bar
+      aws_region: us-east-1
+      aws_resource_arn: "arn:aws:sns:us-east-1:000000000000:topic"
+
+  - name: sendtosqs
+    kind: sqs
+    params:
+      aws_endpoint: http://localstack:4566
+      aws_access_key_id: foo
+      aws_secret_access_key: bar
+      aws_region: us-east-1
+      aws_resource_name: "queue"
+
+  - name: sendtosqs2
+    kind: sqs
+    params:
+      aws_endpoint: http://localstack:4566
+      aws_access_key_id: foo
+      aws_secret_access_key: bar
+      aws_region: us-east-1
+      aws_resource_name: "queue2"
+
+  - name: sendtokinesis
+    kind: kinesis
+    params:
+      aws_endpoint: http://localstack:4566
+      aws_access_key_id: foo
+      aws_secret_access_key: bar
+      aws_region: us-east-1
+      aws_resource_name: "stream"
+
+  - name: sendtohttp
+    kind: http
+    params:
+      http_endpoint: http://localhost:8080/transform2/sendtohttp2
+      http_header_auth: Bearer mytoken
+      http_status_ok: 200
+
+  - name: sendtohttp2
+    kind: http
+    params:
+      http_endpoint: http://localhost:8080/transform3/sendtohttp3
+      http_header_auth: Bearer mytoken
+      http_status_ok: 200
+
+  - name: sendtohttp3
+    kind: http
+    params:
+      http_endpoint: http://localhost:8080/transform4/sendtosqs
+      http_header_auth: Bearer mytoken
+      http_status_ok: 200

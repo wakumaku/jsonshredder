@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  workspace:
+    image: golang:1.15
+    command: go run --race ./cmd/server/. -config ./dev/config.dev.yaml
+    depends_on:
+      - localstack
+    restart: on-failure
+    ports:
+      - 8080:8080
+    working_dir: /project
+    environment:
+      - AWS_CONFIG_FILE=/project/dev/.aws/config
+      - AWS_SHARED_CREDENTIALS_FILE=/project/dev/.aws/credentials
+    volumes:
+      - go-cache:/go
+      - ./:/project
+
+  localstack:
+    image: localstack/localstack:0.11.6
+    environment:
+      - SERVICES=sns,sqs,kinesis
+      - DEFAULT_REGION=us-east-1
+      - HOSTNAME=localstack
+      - HOSTNAME_EXTERNAL=localstack
+    volumes:
+      - ./dev/localstack.sh:/docker-entrypoint-initaws.d/localstack.sh
+
+volumes:
+  go-cache:
