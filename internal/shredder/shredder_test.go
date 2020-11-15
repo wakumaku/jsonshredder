@@ -53,9 +53,9 @@ func TestShred(t *testing.T) {
 	out, err := Shred(config.Transformation{Mappings: mappings}, jsonDoc)
 	assert.NoError(t, err)
 
-	expectedOut := []byte(`{
-		"1111":{"2222":{"3333":{"4444":"john","555":"john","xxx":"john"}}},"aaa":{"bbb":{"ccc":{"ddd":2}}},"username":{"weight":93.504}
-	}`)
+	expectedOut := []byte(
+		`{"1111":{"2222":{"3333":{"4444":"john","555":"john","xxx":"john"}}},"aaa":{"bbb":{"ccc":{"ddd":2}}},"username":{"weight":93.504}}`,
+	)
 
 	assert.Equal(t, out, expectedOut)
 }
