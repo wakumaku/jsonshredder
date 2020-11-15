@@ -25,15 +25,12 @@ func (rw *loggerRW) WriteHeader(code int) {
 	rw.status = code
 	rw.ResponseWriter.WriteHeader(code)
 	rw.wroteHeader = true
-
-	return
 }
 
 func loggerHandler(next http.HandlerFunc, logger *zerolog.Logger) http.HandlerFunc {
 	lgr := logger.With().Str("section", "handler.logger").Logger()
 
 	return func(rw http.ResponseWriter, r *http.Request) {
-
 		start := time.Now()
 		rrw := &loggerRW{ResponseWriter: rw}
 

@@ -4,8 +4,6 @@ import (
 	"context"
 	"net/http"
 	"time"
-
-	"github.com/gorilla/mux"
 )
 
 // Server is a common http server
@@ -14,7 +12,7 @@ type Server struct {
 }
 
 // New creates a new Server
-func New(port string, router *mux.Router, timeout time.Duration) *Server {
+func New(port string, router http.Handler, timeout time.Duration) *Server {
 	return &Server{
 		server: &http.Server{
 			Handler:      router,

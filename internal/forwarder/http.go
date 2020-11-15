@@ -2,6 +2,7 @@ package forwarder
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -82,7 +83,7 @@ func NewHTTP(endpoint string, opts ...HTTPOption) Forwarder {
 
 // Publish sends an http request
 func (p *httpForwarder) Publish(msg []byte) error {
-	req, err := http.NewRequest(p.method, p.endpoint, bytes.NewBuffer(msg))
+	req, err := http.NewRequestWithContext(context.TODO(), p.method, p.endpoint, bytes.NewBuffer(msg))
 	if err != nil {
 		return Error("http", fmt.Errorf("create request: %s", err))
 	}

@@ -13,7 +13,7 @@ type snsForwarder struct {
 	topicARN string
 }
 
-// NewSNS ...
+// NewSNS creates a new SNS forwarder
 func NewSNS(topicARN string, opts ...AWSOption) (Forwarder, error) {
 	s, err := initAWSSession(buildAWSConfigFromOptions(opts...))
 	if err != nil {

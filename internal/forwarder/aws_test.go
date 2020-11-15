@@ -1,146 +1,116 @@
 package forwarder
 
 import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"net/http"
-	"net/http/httptest"
-	"net/url"
-	"strings"
-)
+	"errors"
+	"testing"
 
-// SQSActionResponse SQS Actions and Responses
-var SQSActionResponse = map[string]string{
-	"GetQueueUrl": responseGetQueueURL,
-	"SendMessage": responseSendMessage,
-}
+	"github.com/stretchr/testify/assert"
+)
 
 const (
-	responseGetQueueURL = `
-	<GetQueueUrlResponse>
-		<GetQueueUrlResult>
-		<QueueUrl>https://sqs.us-east-2.amazonaws.com/123456789012/MyQueue</QueueUrl>
-		</GetQueueUrlResult>
-		<ResponseMetadata>
-			<RequestId>470a6f13-2ed9-4181-ad8a-2fdea142988e</RequestId>
-			</ResponseMetadata>
-			</GetQueueUrlResponse>`
-	responseSendMessage = `
-			<SendMessageResponse>
-		<SendMessageResult>
-		<MD5OfMessageBody>5eb63bbbe01eeed093cb22bb8f5acdc3</MD5OfMessageBody>
-			<MD5OfMessageAttributes>3ae8f24a165a8cedc005670c81a27295</MD5OfMessageAttributes>
-			<MessageId>5fea7756-0ea4-451a-a703-a558b933e274</MessageId>
-		</SendMessageResult>
-		<ResponseMetadata>
-		<RequestId>27daac76-34dd-47df-bd01-1f6e873584a0</RequestId>
-		</ResponseMetadata>
-	</SendMessageResponse>`
+	kindSNS     = "sns"
+	kindSQS     = "sqs"
+	kindKinesis = "kinesis"
 )
 
-// SNSActionResponse SNS Actions and Responses
-var SNSActionResponse = map[string]string{
-	"Publish": responsePublish,
-}
-
-const (
-	responsePublish = `
-	<PublishResponse xmlns="https://sns.amazonaws.com/doc/2010-03-31/">
-		<PublishResult>
-			<MessageId>567910cd-659e-55d4-8ccb-5aaf14679dc0</MessageId>
-		</PublishResult>
-		<ResponseMetadata>
-			<RequestId>d74b8436-ae13-5ab4-a9ff-ce54dfea72a0</RequestId>
-		</ResponseMetadata>
-	</PublishResponse>`
+var (
+	awsForwardersTest = map[string]string{
+		kindSNS:     "Publish",
+		kindSQS:     "SendMessage",
+		kindKinesis: "PutRecord",
+	}
 )
 
-// KinesisActionResponse Kinesis Actions and Responses
-var KinesisActionResponse = map[string]string{
-	"PutRecord": responsePutRecord,
-}
+func TestAWSForwarders(t *testing.T) {
+	for kind := range awsForwardersTest {
+		sqsSVC := startAWSMockServer(kind)
+		defer sqsSVC.Close()
 
-const (
-	responsePutRecord = `
-	{
-		"SequenceNumber": "21269319989653637946712965403778482177",
-		"ShardId": "shardId-000000000001"
-	}`
-)
+		fwd, err := buildForwarder(kind, sqsSVC.URL)
+		assert.Nil(t, err, "unexpected error creating forwarder")
 
-const responseErrorGeneric = `
-<ErrorResponse>
-<RequestId>42d59b56-7407-4c4a-be0f-4c88daeea257</RequestId>
-	<Error>
-		<Type>Sender</Type>
-		<Code>InvalidParameterValue</Code>
-		<Message>
-			Value (quename_nonalpha) for parameter QueueName is invalid.
-			Must be an alphanumeric String of 1 to 80 in length.
-		</Message>
-	</Error>
-</ErrorResponse>`
-
-func awsMockHandler(actionsResponse map[string]string) http.HandlerFunc {
-	return func(rw http.ResponseWriter, r *http.Request) {
-		b, _ := ioutil.ReadAll(r.Body)
-		defer r.Body.Close()
-
-		params, err := parseBodyParams(b)
-		if err != nil {
-			rw.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		action := params["Action"]
-		if action == "" {
-			action = strings.Split(r.Header.Get("X-Amz-Target"), ".")[1]
-		}
-
-		response, found := actionsResponse[action]
-		if !found {
-			rw.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		if r.URL.Path == "/fail"+action+"/" {
-			rw.WriteHeader(http.StatusBadRequest)
-			fmt.Fprint(rw, responseErrorGeneric)
-			return
-		}
-
-		fmt.Fprint(rw, response)
+		message := []byte("hello world")
+		assert.Nil(t, fwd.Publish(message), "unexpected error publishing message")
 	}
 }
 
-func parseBodyParams(in []byte) (map[string]string, error) {
-	r := map[string]string{}
+func TestSNSErrorPublishMessage(t *testing.T) {
+	for kind, action := range awsForwardersTest {
+		sqsSVC := startAWSMockServer(kind)
+		defer sqsSVC.Close()
 
-	if err := json.Unmarshal(in, &r); err == nil {
-		return r, nil
+		fwd, err := buildForwarder(kind, sqsSVC.URL+"/fail"+action)
+		assert.Nil(t, err, "unexpected error")
+
+		message := []byte("hello world")
+		assert.NotNilf(t, fwd.Publish(message), "expecting an error sending message")
 	}
-
-	values, err := url.ParseQuery(string(in))
-	if err != nil {
-		return r, err
-	}
-
-	for k, v := range values {
-		r[k] = v[0]
-	}
-
-	return r, nil
 }
 
-func startAWSSQSMockServer() *httptest.Server {
-	return httptest.NewServer(awsMockHandler(SQSActionResponse))
+func buildForwarder(kind, endpoint string) (Forwarder, error) {
+	switch kind {
+	case kindSQS:
+		return NewSQS("queuename", AWSWithEndpoint(endpoint), AWSWithRegion("us-east-1"))
+	case kindSNS:
+		return NewSNS("topicname", AWSWithEndpoint(endpoint), AWSWithRegion("us-east-1"))
+	case kindKinesis:
+		return NewKinesis("streamname", AWSWithEndpoint(endpoint), AWSWithRegion("us-east-1"))
+	}
+	return nil, errors.New("unknown kind of forwarder")
 }
 
-func startAWSSNSMockServer() *httptest.Server {
-	return httptest.NewServer(awsMockHandler(SNSActionResponse))
+func TestConfigOptions(t *testing.T) {
+	const (
+		endpoint         = "Endpoint"
+		keyID            = "KeyID"
+		secret           = "Secret"
+		profile          = "Profile"
+		region           = "Region"
+		resourceARN      = "ResourceARN"
+		resourceEndpoint = "ResourceEndpoint"
+		resourceName     = "ResourceName"
+	)
+
+	cfg := buildAWSConfigFromOptions(
+		AWSWithEndpoint(endpoint),
+		AWSWithKeyID(keyID),
+		AWSWithSecret(secret),
+		AWSWithProfile(profile),
+		AWSWithRegion(region),
+		AWSWithResourceARN(resourceARN),
+		AWSWithResourceEndpoint(resourceEndpoint),
+		AWSWithResourceName(resourceName),
+	)
+
+	assert.Equal(t, endpoint, cfg.endpoint)
+	assert.Equal(t, keyID, cfg.key)
+	assert.Equal(t, secret, cfg.secret)
+	assert.Equal(t, profile, cfg.profile)
+	assert.Equal(t, region, cfg.region)
+	assert.Equal(t, resourceARN, cfg.resourceArn)
+	assert.Equal(t, resourceEndpoint, cfg.resourceEndpoint)
+	assert.Equal(t, resourceName, cfg.resourceName)
 }
 
-func startAWSKinesisMockServer() *httptest.Server {
-	return httptest.NewServer(awsMockHandler(KinesisActionResponse))
+func TestInitAWSSession(t *testing.T) {
+	cfg := &AWSConfig{
+		endpoint: "endpoint",
+		profile:  "profile",
+		region:   "region",
+	}
+	s, _ := initAWSSession(cfg)
+
+	assert.Equal(t, "endpoint", *s.Config.Endpoint)
+	assert.Equal(t, "region", *s.Config.Region)
+
+	cfg = &AWSConfig{
+		endpoint: "endpoint",
+		key:      "key",
+		secret:   "secret",
+		region:   "region",
+	}
+	s, _ = initAWSSession(cfg)
+
+	assert.Equal(t, "endpoint", *s.Config.Endpoint)
+	assert.Equal(t, "region", *s.Config.Region)
 }

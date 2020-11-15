@@ -57,7 +57,7 @@ func AWSWithResourceARN(value string) AWSOption {
 	}
 }
 
-func AWSWithKResourceEndpoint(value string) AWSOption {
+func AWSWithResourceEndpoint(value string) AWSOption {
 	return func(c *AWSConfig) {
 		c.resourceEndpoint = value
 	}

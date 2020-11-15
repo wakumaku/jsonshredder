@@ -52,8 +52,9 @@ func main() {
 	shredSrv := service.NewShredder(cfg.Transformations, &logger)
 	ffwSrv := service.NewForwarder(cfg.Forwarders, &logger)
 
-	// Starts server
-	server := New(cfg.Port, handler.Router(shredSrv, ffwSrv, &logger), 5*time.Second)
+	// Initializes the HTTP server
+	connTimeout := 5 * time.Second
+	server := New(cfg.Port, handler.Router(shredSrv, ffwSrv, &logger), connTimeout)
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(
@@ -74,8 +75,4 @@ func main() {
 	logger.Info().Str("section", "main").Msg("Starting server ...")
 	logger.Fatal().Str("section", "main").Err(server.Run(ctx)).Send()
 	time.Sleep(time.Second)
-}
-
-func shutdown() {
-
 }

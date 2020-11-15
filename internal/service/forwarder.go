@@ -35,8 +35,7 @@ func NewForwarder(fwdConfig map[string]config.Forwarder, logger *zerolog.Logger)
 
 // Forward resolves the forwarder to be used and sends the data
 func (c *Forwarder) Forward(forwarderName string, input []byte) error {
-	fwd, err := c.getForwarder(forwarderName)
-	if err == nil {
+	if fwd, err := c.getForwarder(forwarderName); err == nil {
 		if err := fwd.Publish(input); err != nil {
 			err = fmt.Errorf("%w: %s", ErrForwardPublishing, err)
 			c.logger.Debug().Err(err).Send()
@@ -46,7 +45,7 @@ func (c *Forwarder) Forward(forwarderName string, input []byte) error {
 		return nil
 	}
 
-	err = fmt.Errorf("%w: '%s'", ErrForwardNotFound, forwarderName)
+	err := fmt.Errorf("%w: '%s'", ErrForwardNotFound, forwarderName)
 	c.logger.Debug().Err(err).Send()
 	return err
 }
