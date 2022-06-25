@@ -44,17 +44,12 @@ dockers:
 
     goarch: amd64
 
-    binaries:
-    - jsonshredder
-
-    builds:
+    ids:
     - jsonshredder
 
     image_templates:
     - "wakumaku/jsonshredder:latest"
     - "wakumaku/jsonshredder:{{ .Tag }}"
     - "wakumaku/jsonshredder:v{{ .Major }}"
-
-    skip_push: false
 
     dockerfile: ./build/Dockerfile.goreleaser
