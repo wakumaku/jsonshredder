@@ -3,7 +3,7 @@ module wakumaku/jsonshredder
 go 1.18
 
 require (
-	github.com/aws/aws-sdk-go v1.44.86
+	github.com/aws/aws-sdk-go v1.44.102
 	github.com/gorilla/mux v1.8.0
 	github.com/jmespath/go-jmespath v0.4.0
 	github.com/rs/zerolog v1.28.0
