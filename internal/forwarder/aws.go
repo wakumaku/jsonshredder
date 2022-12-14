@@ -1,11 +1,12 @@
 package forwarder
 
 import (
-	"os"
+	"context"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/session"
+	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+
+	credentialsv2 "github.com/aws/aws-sdk-go-v2/credentials"
 )
 
 type AWSConfig struct {
@@ -70,36 +71,31 @@ func AWSWithResourceName(value string) AWSOption {
 }
 
 func buildAWSConfigFromOptions(opts ...AWSOption) *AWSConfig {
-	config := &AWSConfig{}
+	config := AWSConfig{}
 	for _, o := range opts {
 		if o != nil {
-			o(config)
+			o(&config)
 		}
 	}
-	return config
+	return &config
 }
 
-func initAWSSession(cfg *AWSConfig) (*session.Session, error) {
-	var cred *credentials.Credentials
-	if cfg.key != "" && cfg.secret != "" {
-		cred = credentials.NewStaticCredentials(cfg.key, cfg.secret, "")
+func initAWSSession(ctx context.Context, awsCfg *AWSConfig) (awsv2.Config, error) {
+	cfgOptions := make([]func(*config.LoadOptions) error, 0)
+
+	if awsCfg.key != "" && awsCfg.secret != "" {
+		cfgOptions = append(cfgOptions,
+			config.WithCredentialsProvider(
+				credentialsv2.NewStaticCredentialsProvider(awsCfg.key, awsCfg.secret, "")))
 	}
 
-	if cfg.profile != "" {
-		os.Setenv("AWS_SDK_LOAD_CONFIG", "true")
-		return session.NewSessionWithOptions(session.Options{
-			Profile: cfg.profile,
-			Config: aws.Config{
-				Endpoint:    aws.String(cfg.endpoint),
-				Credentials: cred,
-				Region:      aws.String(cfg.region),
-			},
-		})
+	if awsCfg.profile != "" {
+		cfgOptions = append(cfgOptions, config.WithSharedConfigProfile(awsCfg.profile))
 	}
 
-	return session.NewSession(&aws.Config{
-		Endpoint:    aws.String(cfg.endpoint),
-		Credentials: cred,
-		Region:      aws.String(cfg.region),
-	})
+	if awsCfg.region != "" {
+		cfgOptions = append(cfgOptions, config.WithRegion(awsCfg.region))
+	}
+
+	return config.LoadDefaultConfig(ctx, cfgOptions...)
 }

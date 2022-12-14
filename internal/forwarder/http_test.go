@@ -1,6 +1,7 @@
 package forwarder
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -23,14 +24,14 @@ func TestHttpForwarderDefaultsOk(t *testing.T) {
 	defer server.Close()
 
 	fwd := NewHTTP(server.URL)
-	if err := fwd.Publish([]byte("hello")); err != nil {
+	if err := fwd.Publish(context.TODO(), []byte("hello")); err != nil {
 		t.Errorf("unexpected error: %s", err)
 	}
 }
 
 func TestHttpForwarderRequestURLMethodError(t *testing.T) {
 	fwd := NewHTTP("#")
-	err := fwd.Publish([]byte("hello"))
+	err := fwd.Publish(context.TODO(), []byte("hello"))
 	assert.NotNil(t, err)
 }
 
@@ -39,7 +40,7 @@ func TestHttpForwarderDefaultsFails(t *testing.T) {
 	defer server.Close()
 
 	fwd := NewHTTP(server.URL)
-	if err := fwd.Publish([]byte("hello")); err == nil {
+	if err := fwd.Publish(context.TODO(), []byte("hello")); err == nil {
 		t.Error("expecting an error here")
 	}
 }
@@ -54,7 +55,7 @@ func TestHttpForwarderErrorOnTimeOut(t *testing.T) {
 	defer server.Close()
 
 	fwd := NewHTTP(server.URL, HTTPWithTimeOut(10*time.Millisecond))
-	if err := fwd.Publish([]byte("hello")); err == nil {
+	if err := fwd.Publish(context.TODO(), []byte("hello")); err == nil {
 		t.Error("expecting a timeout error here")
 	}
 }
@@ -76,7 +77,7 @@ func TestHttpForwarderWithAuthorization(t *testing.T) {
 	defer server.Close()
 
 	fwd := NewHTTP(server.URL, HTTPWithHeaderAuth(bearer))
-	err := fwd.Publish(nil)
+	err := fwd.Publish(context.TODO(), nil)
 	assert.Nil(t, err)
 }
 
@@ -90,7 +91,7 @@ func TestHttpForwarderWithMethod(t *testing.T) {
 	defer server.Close()
 
 	fwd := NewHTTP(server.URL, HTTPWithMethod("POST"))
-	err := fwd.Publish(nil)
+	err := fwd.Publish(context.TODO(), nil)
 	assert.Nil(t, err)
 }
 
@@ -104,6 +105,6 @@ func TestHttpForwarderWithExpectedStatus(t *testing.T) {
 	defer server.Close()
 
 	fwd := NewHTTP(server.URL, HTTPWithExpectedStatus(http.StatusTeapot))
-	err := fwd.Publish(nil)
+	err := fwd.Publish(context.TODO(), nil)
 	assert.Nil(t, err)
 }

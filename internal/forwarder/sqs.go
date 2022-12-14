@@ -1,27 +1,39 @@
 package forwarder
 
 import (
+	"context"
 	"fmt"
 
+	"github.com/aws/aws-sdk-go-v2/service/sqs"
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/sqs"
-	"github.com/aws/aws-sdk-go/service/sqs/sqsiface"
 )
 
+type isqs interface {
+	GetQueueUrl(ctx context.Context, params *sqs.GetQueueUrlInput, optFns ...func(*sqs.Options)) (*sqs.GetQueueUrlOutput, error)
+	SendMessage(ctx context.Context, params *sqs.SendMessageInput, optFns ...func(*sqs.Options)) (*sqs.SendMessageOutput, error)
+}
+
 type sqsForwarder struct {
-	c        sqsiface.SQSAPI
+	c        isqs
 	queueURL string
 }
 
 // NewSQS creates a new forwarder implementing AWS SQS Queues
-func NewSQS(name string, opts ...AWSOption) (Forwarder, error) {
-	s, err := initAWSSession(buildAWSConfigFromOptions(opts...))
+func NewSQS(ctx context.Context, name string, opts ...AWSOption) (Forwarder, error) {
+	awsCfg := buildAWSConfigFromOptions(opts...)
+	cfg, err := initAWSSession(ctx, awsCfg)
 	if err != nil {
 		return nil, fmt.Errorf("building aws session: %w", err)
 	}
 
-	c := sqs.New(s)
-	o, err := c.GetQueueUrl(&sqs.GetQueueUrlInput{
+	clientOpts := make([]func(*sqs.Options), 0)
+	if awsCfg.endpoint != "" {
+		clientOpts = append(clientOpts, sqs.WithEndpointResolver(
+			sqs.EndpointResolverFromURL(awsCfg.endpoint)))
+	}
+
+	c := sqs.NewFromConfig(cfg, clientOpts...)
+	o, err := c.GetQueueUrl(ctx, &sqs.GetQueueUrlInput{
 		QueueName: aws.String(name),
 	})
 	if err != nil {
@@ -35,8 +47,8 @@ func NewSQS(name string, opts ...AWSOption) (Forwarder, error) {
 }
 
 // Publish sends the message to an SQS
-func (p *sqsForwarder) Publish(msg []byte) error {
-	if _, err := p.c.SendMessage(&sqs.SendMessageInput{
+func (p *sqsForwarder) Publish(ctx context.Context, msg []byte) error {
+	if _, err := p.c.SendMessage(ctx, &sqs.SendMessageInput{
 		MessageBody: aws.String(string(msg)),
 		QueueUrl:    aws.String(p.queueURL),
 	}); err != nil {

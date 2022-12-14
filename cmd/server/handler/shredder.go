@@ -31,7 +31,7 @@ func ShredderForwarder(svc *service.Shredder, forwardSvc *service.Forwarder) htt
 		}
 
 		if forwardSvc != nil {
-			if err := forwardSvc.Forward(vars["forwarder"], out); err != nil {
+			if err := forwardSvc.Forward(r.Context(), vars["forwarder"], out); err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				fmt.Fprintf(w, `{"message": "error forwarding: %s"}`, err)
 				return

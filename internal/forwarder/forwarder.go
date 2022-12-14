@@ -1,10 +1,13 @@
 package forwarder
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+)
 
 // Forwarder defines a forwarder
 type Forwarder interface {
-	Publish([]byte) error
+	Publish(context.Context, []byte) error
 }
 
 // ErrForwarder is the error type to be returned by forwarders

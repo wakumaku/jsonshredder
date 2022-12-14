@@ -1,6 +1,7 @@
 package forwarder
 
 import (
+	"context"
 	"errors"
 	"testing"
 
@@ -30,7 +31,7 @@ func TestAWSForwarders(t *testing.T) {
 		assert.Nil(t, err, "unexpected error creating forwarder")
 
 		message := []byte("hello world")
-		assert.Nil(t, fwd.Publish(message), "unexpected error publishing message")
+		assert.Nil(t, fwd.Publish(context.TODO(), message), "unexpected error publishing message")
 	}
 }
 
@@ -43,18 +44,18 @@ func TestSNSErrorPublishMessage(t *testing.T) {
 		assert.Nil(t, err, "unexpected error")
 
 		message := []byte("hello world")
-		assert.NotNilf(t, fwd.Publish(message), "expecting an error sending message")
+		assert.NotNilf(t, fwd.Publish(context.TODO(), message), "expecting an error sending message")
 	}
 }
 
 func buildForwarder(kind, endpoint string) (Forwarder, error) {
 	switch kind {
 	case kindSQS:
-		return NewSQS("queuename", AWSWithEndpoint(endpoint), AWSWithRegion("us-east-1"))
+		return NewSQS(context.TODO(), "queuename", AWSWithEndpoint(endpoint), AWSWithRegion("us-east-1"))
 	case kindSNS:
-		return NewSNS("topicname", AWSWithEndpoint(endpoint), AWSWithRegion("us-east-1"))
+		return NewSNS(context.TODO(), "topicname", AWSWithEndpoint(endpoint), AWSWithRegion("us-east-1"))
 	case kindKinesis:
-		return NewKinesis("streamname", AWSWithEndpoint(endpoint), AWSWithRegion("us-east-1"))
+		return NewKinesis(context.TODO(), "streamname", AWSWithEndpoint(endpoint), AWSWithRegion("us-east-1"))
 	}
 	return nil, errors.New("unknown kind of forwarder")
 }
@@ -98,10 +99,9 @@ func TestInitAWSSession(t *testing.T) {
 		profile:  "profile",
 		region:   "region",
 	}
-	s, _ := initAWSSession(cfg)
+	s, _ := initAWSSession(context.TODO(), cfg)
 
-	assert.Equal(t, "endpoint", *s.Config.Endpoint)
-	assert.Equal(t, "region", *s.Config.Region)
+	assert.Equal(t, "region", s.Region)
 
 	cfg = &AWSConfig{
 		endpoint: "endpoint",
@@ -109,8 +109,11 @@ func TestInitAWSSession(t *testing.T) {
 		secret:   "secret",
 		region:   "region",
 	}
-	s, _ = initAWSSession(cfg)
+	s, _ = initAWSSession(context.TODO(), cfg)
 
-	assert.Equal(t, "endpoint", *s.Config.Endpoint)
-	assert.Equal(t, "region", *s.Config.Region)
+	p, _ := s.Credentials.Retrieve(context.TODO())
+
+	assert.Equal(t, "region", s.Region)
+	assert.Equal(t, "key", p.AccessKeyID)
+	assert.Equal(t, "secret", p.SecretAccessKey)
 }
