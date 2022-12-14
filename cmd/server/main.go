@@ -24,9 +24,20 @@ var (
 
 func main() {
 	// Parse input params
-	var p string
+	var (
+		p        string
+		showHelp bool
+	)
 	flag.StringVar(&p, "config", "", "path to config file")
+	flag.BoolVar(&showHelp, "help", false, "shows this help")
 	flag.Parse()
+
+	if showHelp {
+		fmt.Printf(`Version: %s\nDate: %s\nCommit:%s\n`,
+			Version, Date, Commit)
+		flag.Usage()
+		os.Exit(0)
+	}
 
 	if p == "" {
 		flag.Usage()
