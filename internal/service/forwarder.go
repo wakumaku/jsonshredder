@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"wakumaku/jsonshredder/internal/config"
@@ -22,10 +23,10 @@ var (
 )
 
 // NewForwarder creates a new forwarder service
-func NewForwarder(fwdConfig map[string]config.Forwarder, logger *zerolog.Logger) *Forwarder {
+func NewForwarder(ctx context.Context, fwdConfig map[string]config.Forwarder, logger *zerolog.Logger) *Forwarder {
 	lgr := logger.With().Str("section", "service.forwarder").Logger()
 
-	forwarders := buildForwarders(fwdConfig, &lgr)
+	forwarders := buildForwarders(ctx, fwdConfig, &lgr)
 
 	return &Forwarder{
 		forwarders: forwarders,
@@ -34,9 +35,9 @@ func NewForwarder(fwdConfig map[string]config.Forwarder, logger *zerolog.Logger)
 }
 
 // Forward resolves the forwarder to be used and sends the data
-func (c *Forwarder) Forward(forwarderName string, input []byte) error {
+func (c *Forwarder) Forward(ctx context.Context, forwarderName string, input []byte) error {
 	if fwd, err := c.getForwarder(forwarderName); err == nil {
-		if err := fwd.Publish(input); err != nil {
+		if err := fwd.Publish(ctx, input); err != nil {
 			err = fmt.Errorf("%w: %s", ErrForwardPublishing, err)
 			c.logger.Debug().Err(err).Send()
 			return err
@@ -59,7 +60,7 @@ func (c *Forwarder) getForwarder(name string) (forwarder.Forwarder, error) {
 	return nil, errors.New("not found")
 }
 
-func buildForwarders(fwdConfig map[string]config.Forwarder, logger *zerolog.Logger) map[string]forwarder.Forwarder {
+func buildForwarders(ctx context.Context, fwdConfig map[string]config.Forwarder, logger *zerolog.Logger) map[string]forwarder.Forwarder {
 	forwarders := make(map[string]forwarder.Forwarder, len(fwdConfig))
 	for name, cfg := range fwdConfig {
 		var err error
@@ -78,15 +79,15 @@ func buildForwarders(fwdConfig map[string]config.Forwarder, logger *zerolog.Logg
 		case config.KindSNS:
 			topicARN, _ := cfg.Settings[config.SettingAWSResourceArn].(string)
 			params := getCommonAWSParams(cfg.Settings)
-			f, err = forwarder.NewSNS(topicARN, params...)
+			f, err = forwarder.NewSNS(ctx, topicARN, params...)
 		case config.KindSQS:
 			queueName, _ := cfg.Settings[config.SettingAWSResourceName].(string)
 			params := getCommonAWSParams(cfg.Settings)
-			f, err = forwarder.NewSQS(queueName, params...)
+			f, err = forwarder.NewSQS(ctx, queueName, params...)
 		case config.KindKinesis:
 			streamName, _ := cfg.Settings[config.SettingAWSResourceName].(string)
 			params := getCommonAWSParams(cfg.Settings)
-			f, err = forwarder.NewKinesis(streamName, params...)
+			f, err = forwarder.NewKinesis(ctx, streamName, params...)
 		default:
 			logger.Error().Msgf("forwarder: %s, unknown kind: '%s'!", name, cfg.Kind)
 		}

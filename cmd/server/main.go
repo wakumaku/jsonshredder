@@ -24,9 +24,20 @@ var (
 
 func main() {
 	// Parse input params
-	var p string
+	var (
+		p        string
+		showHelp bool
+	)
 	flag.StringVar(&p, "config", "", "path to config file")
+	flag.BoolVar(&showHelp, "help", false, "shows this help")
 	flag.Parse()
+
+	if showHelp {
+		fmt.Printf(`Version: %s\nDate: %s\nCommit:%s\n`,
+			Version, Date, Commit)
+		flag.Usage()
+		os.Exit(0)
+	}
 
 	if p == "" {
 		flag.Usage()
@@ -40,6 +51,14 @@ func main() {
 		os.Exit(1)
 	}
 
+	// initializes context
+	ctx, cancel := signal.NotifyContext(context.Background(),
+		syscall.SIGHUP,  // kill -SIGHUP XXXX
+		syscall.SIGINT,  // kill -SIGINT XXXX or Ctrl+c
+		syscall.SIGQUIT, // kill -SIGQUIT XXXX
+	)
+	defer cancel()
+
 	zerolog.SetGlobalLevel(cfg.LogLevel)
 	logger := zerolog.New(os.Stdout).With().
 		Str("appname", "jsonshredder").
@@ -50,24 +69,14 @@ func main() {
 
 	// Builds Shredder service
 	shredSrv := service.NewShredder(cfg.Transformations, &logger)
-	ffwSrv := service.NewForwarder(cfg.Forwarders, &logger)
+	ffwSrv := service.NewForwarder(ctx,cfg.Forwarders, &logger)
 
 	// Initializes the HTTP server
 	connTimeout := 5 * time.Second
 	server := New(cfg.Port, handler.Router(shredSrv, ffwSrv, &logger), connTimeout)
 
-	c := make(chan os.Signal, 1)
-	signal.Notify(
-		c,
-		syscall.SIGHUP,  // kill -SIGHUP XXXX
-		syscall.SIGINT,  // kill -SIGINT XXXX or Ctrl+c
-		syscall.SIGQUIT, // kill -SIGQUIT XXXX
-	)
-
-	ctx, cancel := context.WithCancel(context.Background())
-
 	go func() {
-		<-c
+		<-ctx.Done()
 		logger.Warn().Msg("closing server!")
 		cancel()
 	}()

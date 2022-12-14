@@ -1,5 +1,7 @@
 package forwarder
 
+import "context"
+
 type dummyForwarder struct {
 }
 
@@ -8,6 +10,6 @@ func NewDummy() Forwarder {
 	return &dummyForwarder{}
 }
 
-func (p *dummyForwarder) Publish(msg []byte) error {
+func (p *dummyForwarder) Publish(_ context.Context, _ []byte) error {
 	return nil
 }

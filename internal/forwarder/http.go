@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"time"
 )
@@ -82,8 +82,8 @@ func NewHTTP(endpoint string, opts ...HTTPOption) Forwarder {
 }
 
 // Publish sends an http request
-func (p *httpForwarder) Publish(msg []byte) error {
-	req, err := http.NewRequestWithContext(context.TODO(), p.method, p.endpoint, bytes.NewBuffer(msg))
+func (p *httpForwarder) Publish(ctx context.Context, msg []byte) error {
+	req, err := http.NewRequestWithContext(ctx, p.method, p.endpoint, bytes.NewBuffer(msg))
 	if err != nil {
 		return Error("http", fmt.Errorf("create request: %s", err))
 	}
@@ -98,7 +98,7 @@ func (p *httpForwarder) Publish(msg []byte) error {
 		var r string
 		if resp.Body != nil {
 			defer resp.Body.Close()
-			if b, err := ioutil.ReadAll(resp.Body); err == nil {
+			if b, err := io.ReadAll(resp.Body); err == nil {
 				r = fmt.Sprintf("%q", b)
 			}
 		}
