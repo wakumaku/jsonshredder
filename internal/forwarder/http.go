@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"time"
 )
@@ -98,7 +98,7 @@ func (p *httpForwarder) Publish(ctx context.Context, msg []byte) error {
 		var r string
 		if resp.Body != nil {
 			defer resp.Body.Close()
-			if b, err := ioutil.ReadAll(resp.Body); err == nil {
+			if b, err := io.ReadAll(resp.Body); err == nil {
 				r = fmt.Sprintf("%q", b)
 			}
 		}

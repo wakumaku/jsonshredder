@@ -3,10 +3,9 @@ package forwarder
 import (
 	"context"
 
-	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
-
-	credentialsv2 "github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/credentials"
 )
 
 type AWSConfig struct {
@@ -80,13 +79,13 @@ func buildAWSConfigFromOptions(opts ...AWSOption) *AWSConfig {
 	return &config
 }
 
-func initAWSSession(ctx context.Context, awsCfg *AWSConfig) (awsv2.Config, error) {
+func initAWSSession(ctx context.Context, awsCfg *AWSConfig) (aws.Config, error) {
 	cfgOptions := make([]func(*config.LoadOptions) error, 0)
 
 	if awsCfg.key != "" && awsCfg.secret != "" {
 		cfgOptions = append(cfgOptions,
 			config.WithCredentialsProvider(
-				credentialsv2.NewStaticCredentialsProvider(awsCfg.key, awsCfg.secret, "")))
+				credentials.NewStaticCredentialsProvider(awsCfg.key, awsCfg.secret, "")))
 	}
 
 	if awsCfg.profile != "" {

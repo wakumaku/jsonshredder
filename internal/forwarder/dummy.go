@@ -10,6 +10,6 @@ func NewDummy() Forwarder {
 	return &dummyForwarder{}
 }
 
-func (p *dummyForwarder) Publish(m_ context.Context, _ []byte) error {
+func (p *dummyForwarder) Publish(_ context.Context, _ []byte) error {
 	return nil
 }
