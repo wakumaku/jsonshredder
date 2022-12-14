@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   workspace:
-    image: golang:1.19.3
+    image: golang:1.19.4
     command: go run --race ./cmd/server/. -config ./dev/config.dev.yaml
     depends_on:
       - localstack
