@@ -3,7 +3,7 @@ module wakumaku/jsonshredder
 go 1.19
 
 require (
-	github.com/aws/aws-sdk-go v1.44.172
+	github.com/aws/aws-sdk-go v1.44.173
 	github.com/aws/aws-sdk-go-v2 v1.17.3
 	github.com/aws/aws-sdk-go-v2/config v1.18.6
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.7
