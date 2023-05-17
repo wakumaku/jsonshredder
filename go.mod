@@ -6,7 +6,7 @@ require (
 	github.com/aws/aws-sdk-go v1.44.264
 	github.com/aws/aws-sdk-go-v2 v1.18.0
 	github.com/aws/aws-sdk-go-v2/config v1.18.24
-	github.com/aws/aws-sdk-go-v2/credentials v1.13.23
+	github.com/aws/aws-sdk-go-v2/credentials v1.13.24
 	github.com/aws/aws-sdk-go-v2/service/kinesis v1.17.10
 	github.com/aws/aws-sdk-go-v2/service/sns v1.20.8
 	github.com/aws/aws-sdk-go-v2/service/sqs v1.22.0
