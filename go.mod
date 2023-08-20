@@ -7,7 +7,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.20.3
 	github.com/aws/aws-sdk-go-v2/config v1.18.25
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.34
-	github.com/aws/aws-sdk-go-v2/service/kinesis v1.17.12
+	github.com/aws/aws-sdk-go-v2/service/kinesis v1.18.4
 	github.com/aws/aws-sdk-go-v2/service/sns v1.21.3
 	github.com/aws/aws-sdk-go-v2/service/sqs v1.22.0
 	github.com/gorilla/mux v1.8.0
@@ -18,7 +18,7 @@ require (
 )
 
 require (
-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.4.10 // indirect
+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.4.13 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.10 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.40 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.34 // indirect
