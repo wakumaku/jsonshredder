@@ -25,8 +25,8 @@ github.com/aws/aws-sdk-go-v2/service/kinesis v1.18.4 h1:UohaQds+Puk9BEbvncXkZduI
 github.com/aws/aws-sdk-go-v2/service/kinesis v1.18.4/go.mod h1:HnjgmL8TNmYtGcrA3N6EeCnDvlX6CteCdUbZ1wV8QWQ=
 github.com/aws/aws-sdk-go-v2/service/sns v1.25.1 h1:0WdK/fMLIj2Ue6xmvuTLKd4aFVxib+Mhi7yPrr5t+QQ=
 github.com/aws/aws-sdk-go-v2/service/sns v1.25.1/go.mod h1:g9oPCEbC9NinvW9AT0guuYcCmRJ3YDMWQ3e+j90wW10=
-github.com/aws/aws-sdk-go-v2/service/sqs v1.24.4 h1:bp8KUUx15mnLMe8SSJqO/kYEn0C2kKfWq/M9SRK9i1E=
-github.com/aws/aws-sdk-go-v2/service/sqs v1.24.4/go.mod h1:c1AF/ac4k4xz32FprEk6AqqGFH/Fkub9VUPSrASlllA=
+github.com/aws/aws-sdk-go-v2/service/sqs v1.28.0 h1:+JVIntWBGQJ8M3rNEFNHiIzF4CMpfrRe+Xt39mS+6VA=
+github.com/aws/aws-sdk-go-v2/service/sqs v1.28.0/go.mod h1:lf0CvAYZ5VaBd0mTUcuVRqQYm3Mk+L7xKvRPudRzhik=
 github.com/aws/aws-sdk-go-v2/service/sso v1.13.4 h1:WZPZ7Zf6Yo13lsfTetFrLU/7hZ9CXESDpdIHvmLxQFQ=
 github.com/aws/aws-sdk-go-v2/service/sso v1.13.4/go.mod h1:FP05hDXTLouXwAMQ1swqybHy7tHySblMkBMKSumaKg0=
 github.com/aws/aws-sdk-go-v2/service/ssooidc v1.15.4 h1:pYFM2U/3/4RLrlMSYXwL1XPBCWvaePk2p+0+i/BgHOs=
