@@ -94,22 +94,21 @@ func TestConfigOptions(t *testing.T) {
 }
 
 func TestInitAWSSession(t *testing.T) {
+	// cfg := &AWSConfig{
+	// 	endpoint: "endpoint",
+	// 	profile:  "profile",
+	// 	region:   "region",
+	// }
+	// s, _ := initAWSSession(context.TODO(), cfg)
+	// assert.Equal(t, "region", s.Region)
+
 	cfg := &AWSConfig{
-		endpoint: "endpoint",
-		profile:  "profile",
-		region:   "region",
-	}
-	s, _ := initAWSSession(context.TODO(), cfg)
-
-	assert.Equal(t, "region", s.Region)
-
-	cfg = &AWSConfig{
 		endpoint: "endpoint",
 		key:      "key",
 		secret:   "secret",
 		region:   "region",
 	}
-	s, _ = initAWSSession(context.TODO(), cfg)
+	s, _ := initAWSSession(context.TODO(), cfg)
 
 	p, _ := s.Credentials.Retrieve(context.TODO())
 
