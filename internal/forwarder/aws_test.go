@@ -25,26 +25,26 @@ var (
 func TestAWSForwarders(t *testing.T) {
 	for kind := range awsForwardersTest {
 		sqsSVC := startAWSMockServer(kind)
-		defer sqsSVC.Close()
 
 		fwd, err := buildForwarder(kind, sqsSVC.URL)
 		assert.Nil(t, err, "unexpected error creating forwarder")
 
 		message := []byte("hello world")
 		assert.Nil(t, fwd.Publish(context.TODO(), message), "unexpected error publishing message")
+		sqsSVC.Close()
 	}
 }
 
 func TestSNSErrorPublishMessage(t *testing.T) {
 	for kind, action := range awsForwardersTest {
 		sqsSVC := startAWSMockServer(kind)
-		defer sqsSVC.Close()
 
 		fwd, err := buildForwarder(kind, sqsSVC.URL+"/fail"+action)
 		assert.Nil(t, err, "unexpected error")
 
 		message := []byte("hello world")
 		assert.NotNilf(t, fwd.Publish(context.TODO(), message), "expecting an error sending message")
+		sqsSVC.Close()
 	}
 }
 

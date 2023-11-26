@@ -17,26 +17,16 @@ var SQSActionResponse = map[string]string{
 }
 
 const (
-	responseGetQueueURL = `
-	<GetQueueUrlResponse>
-		<GetQueueUrlResult>
-		<QueueUrl>https://sqs.us-east-2.amazonaws.com/123456789012/MyQueue</QueueUrl>
-		</GetQueueUrlResult>
-		<ResponseMetadata>
-			<RequestId>470a6f13-2ed9-4181-ad8a-2fdea142988e</RequestId>
-			</ResponseMetadata>
-			</GetQueueUrlResponse>`
-	responseSendMessage = `
-			<SendMessageResponse>
-		<SendMessageResult>
-		<MD5OfMessageBody>5eb63bbbe01eeed093cb22bb8f5acdc3</MD5OfMessageBody>
-			<MD5OfMessageAttributes>3ae8f24a165a8cedc005670c81a27295</MD5OfMessageAttributes>
-			<MessageId>5fea7756-0ea4-451a-a703-a558b933e274</MessageId>
-		</SendMessageResult>
-		<ResponseMetadata>
-		<RequestId>27daac76-34dd-47df-bd01-1f6e873584a0</RequestId>
-		</ResponseMetadata>
-	</SendMessageResponse>`
+	responseGetQueueURL = `{
+		"QueueUrl": "https://sqs.us-east-2.amazonaws.com/123456789012/MyQueue"
+	}`
+	responseSendMessage = `{
+		"MD5OfMessageAttributes": "string",
+		"MD5OfMessageBody": "5eb63bbbe01eeed093cb22bb8f5acdc3",
+		"MD5OfMessageSystemAttributes": "3ae8f24a165a8cedc005670c81a27295",
+		"MessageId": "5fea7756-0ea4-451a-a703-a558b933e274",
+		"SequenceNumber": "27daac76-34dd-47df-bd01-1f6e873584a0"
+	 }`
 )
 
 // SNSActionResponse SNS Actions and Responses
