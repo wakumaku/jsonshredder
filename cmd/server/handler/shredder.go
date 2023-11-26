@@ -2,7 +2,7 @@ package handler
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"wakumaku/jsonshredder/internal/service"
@@ -15,7 +15,7 @@ func ShredderForwarder(svc *service.Shredder, forwardSvc *service.Forwarder) htt
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 
-		body, err := ioutil.ReadAll(r.Body)
+		body, err := io.ReadAll(r.Body)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(w, `{"message": "error reading body: %s"}`, err)

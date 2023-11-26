@@ -1,7 +1,7 @@
 package config
 
 import (
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/rs/zerolog"
@@ -27,7 +27,7 @@ forwarders:
       aws_access_key_id: foo
 `)
 
-	f, err := ioutil.TempFile("", "config.yml")
+	f, err := os.CreateTemp("", "config.yml")
 	assert.Nil(t, err, "cannot create config temp file")
 	_, err = f.Write(config)
 	assert.Nil(t, err, "cannot write config temp file")

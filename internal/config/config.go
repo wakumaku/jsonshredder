@@ -2,7 +2,7 @@ package config
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 
 	"github.com/rs/zerolog"
 	"gopkg.in/yaml.v3"
@@ -10,7 +10,7 @@ import (
 
 // LoadFromFile loads a config file and returns an Application config
 func LoadFromFile(path string) (*App, error) {
-	b, err := ioutil.ReadFile(path)
+	b, err := os.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("reading config file: %s", err)
 	}

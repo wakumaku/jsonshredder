@@ -3,7 +3,7 @@ package forwarder
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -84,7 +84,7 @@ const responseErrorGeneric = `
 
 func awsMockHandler(actionsResponse map[string]string) http.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request) {
-		b, _ := ioutil.ReadAll(r.Body)
+		b, _ := io.ReadAll(r.Body)
 		defer r.Body.Close()
 
 		params, err := parseBodyParams(b)
