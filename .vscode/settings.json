@@ -20,5 +20,10 @@
     "gopls": {
         "usePlaceholders": true,
         "staticcheck": false,
+    },
+    "[go][go.mod]": {
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        }
     }
 }
