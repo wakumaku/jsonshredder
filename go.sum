@@ -20,8 +20,8 @@ github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.11.2 h1:Ji0DY1x
 github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.11.2/go.mod h1:5CsjAbs3NlGQyZNFACh+zztPDI7fU6eW9QsxjfnuBKg=
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.11.10 h1:7kZqP7akv0enu6ykJhb9OYlw16oOrSy+Epus8o/VqMY=
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.11.10/go.mod h1:gYVF3nM1ApfTRDj9pvdhootBb8WbiIejuqn4w8ruMes=
-github.com/aws/aws-sdk-go-v2/service/kinesis v1.27.9 h1:fAlpf552tr0b6bTvCacWje8QVZegGWKd/uYZuoyMKew=
-github.com/aws/aws-sdk-go-v2/service/kinesis v1.27.9/go.mod h1:DUtS2PcuynMnTZEtNAc3Wohb2fOazftHiqnlwCACsaY=
+github.com/aws/aws-sdk-go-v2/service/kinesis v1.27.10 h1:lmp5qBDoJCLsPwKrYNe6zbHnNvW5jzz/xS+H0jkoSYg=
+github.com/aws/aws-sdk-go-v2/service/kinesis v1.27.10/go.mod h1:CUWfw8B25XToRN7+sg092F9Ywjvz0PT4veHXBQ2KE0A=
 github.com/aws/aws-sdk-go-v2/service/sns v1.29.9 h1:qmf/3SierpSOCu6hB1AO01s1MWI+3QfrEQlde6XrMFU=
 github.com/aws/aws-sdk-go-v2/service/sns v1.29.9/go.mod h1:fqNzmSY2wcX37R1TLczX+AESDN0lBv4Ejc5NvoDWX/k=
 github.com/aws/aws-sdk-go-v2/service/sqs v1.32.6 h1:FrGnU+Ggf+jUFj1O7Pdw5hCk42dmyO9TOTCVL7mDISk=
