@@ -16,7 +16,7 @@ type ErrForwarder struct {
 	err  error
 }
 
-func (e *ErrForwarder) Unwrap(err error) error {
+func (e *ErrForwarder) Unwrap() error {
 	return e.err
 }
 
