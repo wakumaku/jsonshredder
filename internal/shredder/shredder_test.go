@@ -2,7 +2,8 @@ package shredder
 
 import (
 	"testing"
-	"wakumaku/jsonshredder/internal/config"
+
+	"github.com/wakumaku/jsonshredder/internal/config"
 
 	"github.com/stretchr/testify/assert"
 )

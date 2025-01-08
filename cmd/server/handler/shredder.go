@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/http"
 
-	"wakumaku/jsonshredder/internal/service"
+	"github.com/wakumaku/jsonshredder/internal/service"
 
 	"github.com/gorilla/mux"
 )

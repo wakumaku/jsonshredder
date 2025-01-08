@@ -3,8 +3,10 @@ package service
 import (
 	"errors"
 	"fmt"
-	"wakumaku/jsonshredder/internal/config"
-	"wakumaku/jsonshredder/internal/shredder"
+
+	"github.com/wakumaku/jsonshredder/internal/shredder"
+
+	"github.com/wakumaku/jsonshredder/internal/config"
 
 	"github.com/rs/zerolog"
 )

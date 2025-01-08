@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"wakumaku/jsonshredder/internal/service"
+	"github.com/wakumaku/jsonshredder/internal/service"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/zerolog"

@@ -8,9 +8,12 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-	"wakumaku/jsonshredder/cmd/server/handler"
-	"wakumaku/jsonshredder/internal/config"
-	"wakumaku/jsonshredder/internal/service"
+
+	"github.com/wakumaku/jsonshredder/internal/service"
+
+	"github.com/wakumaku/jsonshredder/internal/config"
+
+	"github.com/wakumaku/jsonshredder/cmd/server/handler"
 
 	"github.com/rs/zerolog"
 )
@@ -69,7 +72,7 @@ func main() {
 
 	// Builds Shredder service
 	shredSrv := service.NewShredder(cfg.Transformations, &logger)
-	ffwSrv := service.NewForwarder(ctx,cfg.Forwarders, &logger)
+	ffwSrv := service.NewForwarder(ctx, cfg.Forwarders, &logger)
 
 	// Initializes the HTTP server
 	connTimeout := 5 * time.Second

@@ -6,7 +6,8 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"wakumaku/jsonshredder/internal/config"
+
+	"github.com/wakumaku/jsonshredder/internal/config"
 
 	"github.com/jmespath/go-jmespath"
 )

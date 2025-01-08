@@ -4,8 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"wakumaku/jsonshredder/internal/config"
-	"wakumaku/jsonshredder/internal/forwarder"
+
+	"github.com/wakumaku/jsonshredder/internal/forwarder"
+
+	"github.com/wakumaku/jsonshredder/internal/config"
 
 	"github.com/rs/zerolog"
 )
