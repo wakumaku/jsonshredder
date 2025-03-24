@@ -12,7 +12,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sqs v1.37.14
 	github.com/gorilla/mux v1.8.1
 	github.com/jmespath/go-jmespath v0.4.0
-	github.com/rs/zerolog v1.33.0
+	github.com/rs/zerolog v1.34.0
 	github.com/stretchr/testify v1.10.0
 	gopkg.in/yaml.v3 v3.0.1
 )
