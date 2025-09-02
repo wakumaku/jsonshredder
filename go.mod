@@ -8,7 +8,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.31.2
 	github.com/aws/aws-sdk-go-v2/credentials v1.18.10
 	github.com/aws/aws-sdk-go-v2/service/kinesis v1.39.1
-	github.com/aws/aws-sdk-go-v2/service/sns v1.37.2
+	github.com/aws/aws-sdk-go-v2/service/sns v1.38.1
 	github.com/aws/aws-sdk-go-v2/service/sqs v1.42.0
 	github.com/gorilla/mux v1.8.1
 	github.com/jmespath/go-jmespath v0.4.0
