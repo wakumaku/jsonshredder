@@ -1,10 +1,10 @@
 module github.com/wakumaku/jsonshredder
 
-go 1.22.4
+go 1.23
 
 require (
 	github.com/aws/aws-sdk-go v1.55.8
-	github.com/aws/aws-sdk-go-v2 v1.39.1
+	github.com/aws/aws-sdk-go-v2 v1.39.3
 	github.com/aws/aws-sdk-go-v2/config v1.31.10
 	github.com/aws/aws-sdk-go-v2/credentials v1.18.14
 	github.com/aws/aws-sdk-go-v2/service/kinesis v1.39.1
@@ -28,7 +28,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sso v1.29.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.35.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.38.5 // indirect
-	github.com/aws/smithy-go v1.23.0 // indirect
+	github.com/aws/smithy-go v1.23.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
